@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProductStatisticCollector.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shopping-simulator</a> &gt; <a href="index.source.html" class="el_package">com.app.collectors</a> &gt; <span class="el_source">ProductStatisticCollector.java</span></div><h1>ProductStatisticCollector.java</h1><pre class="source lang-java linenums">package com.app.collectors;
+
+import com.app.product.Product;
+import com.app.product.ProductMapper;
+import com.app.statistic.Statistic;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
+/**
+ * A {@link Collector} implementation that collects {@link Product} objects into a {@link Statistic}.
+ * &lt;p&gt;
+ * The resulting {@link Statistic} contains the minimum, maximum, and average prices of the products.
+ * &lt;/p&gt;
+ */
+<span class="fc" id="L26">public class ProductStatisticCollector implements Collector&lt;Product, List&lt;Product&gt;, Statistic&lt;BigDecimal, List&lt;Product&gt;&gt;&gt; {</span>
+
+    @Override
+    public Supplier&lt;List&lt;Product&gt;&gt; supplier() {
+<span class="fc" id="L30">        return ArrayList::new;</span>
+    }
+
+    @Override
+    public BiConsumer&lt;List&lt;Product&gt;, Product&gt; accumulator() {
+<span class="fc" id="L35">        return List::add;</span>
+    }
+
+    @Override
+    public BinaryOperator&lt;List&lt;Product&gt;&gt; combiner() {
+<span class="fc" id="L40">        return (l1, l2) -&gt; {</span>
+<span class="nc" id="L41">            l1.addAll(l2);</span>
+<span class="nc" id="L42">            return l1;</span>
+        };
+    }
+
+    @Override
+    public Function&lt;List&lt;Product&gt;, Statistic&lt;BigDecimal, List&lt;Product&gt;&gt;&gt; finisher() {
+<span class="fc" id="L48">        return list -&gt; {</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">            if (list.isEmpty()) {</span>
+<span class="fc" id="L50">                throw new IllegalArgumentException(&quot;Cannot compute statistics for an empty list&quot;);</span>
+            }
+
+<span class="fc" id="L53">            var totalSum = list.stream()</span>
+<span class="fc" id="L54">                    .map(ProductMapper.toPrice)</span>
+<span class="fc" id="L55">                    .reduce(BigDecimal::add)</span>
+<span class="fc" id="L56">                    .orElse(BigDecimal.ZERO);</span>
+
+<span class="fc" id="L58">            var average = totalSum.divide(BigDecimal.valueOf(list.size()), 2, RoundingMode.CEILING);</span>
+
+<span class="fc" id="L60">            var grouped = list.stream()</span>
+<span class="fc" id="L61">                    .collect(Collectors.groupingBy(ProductMapper.toPrice));</span>
+
+<span class="fc" id="L63">            var min = grouped.entrySet().stream()</span>
+<span class="fc" id="L64">                    .min(Map.Entry.comparingByKey())</span>
+<span class="fc" id="L65">                    .map(Map.Entry::getValue)</span>
+<span class="fc" id="L66">                    .orElseThrow();</span>
+
+<span class="fc" id="L68">            var max = grouped.entrySet().stream()</span>
+<span class="fc" id="L69">                    .max(Map.Entry.comparingByKey())</span>
+<span class="fc" id="L70">                    .map(Map.Entry::getValue)</span>
+<span class="fc" id="L71">                    .orElseThrow();</span>
+
+<span class="fc" id="L73">            return new Statistic&lt;&gt;(min, max, average);</span>
+        };
+    }
+
+    @Override
+    public Set&lt;Characteristics&gt; characteristics() {
+<span class="fc" id="L79">        return Set.of(Characteristics.CONCURRENT);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

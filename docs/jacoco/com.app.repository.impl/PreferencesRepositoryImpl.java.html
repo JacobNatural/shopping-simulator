@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PreferencesRepositoryImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shopping-simulator</a> &gt; <a href="index.source.html" class="el_package">com.app.repository.impl</a> &gt; <span class="el_source">PreferencesRepositoryImpl.java</span></div><h1>PreferencesRepositoryImpl.java</h1><pre class="source lang-java linenums">package com.app.repository.impl;
+
+import com.app.parser.LineParser;
+import com.app.repository.PreferencesRepository;
+import com.app.txt.load.Load;
+import com.app.validators.Validator;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Implementation of the {@link PreferencesRepository} interface that provides access to preference data.
+ * &lt;p&gt;
+ * This class loads preferences data from a file using the {@link Load} interface, parses it using a {@link LineParser},
+ * and validates it using a {@link Validator}.
+ */
+@Component
+public class PreferencesRepositoryImpl implements PreferencesRepository {
+
+    private final Map&lt;Long, String&gt; preferences;
+
+    /**
+     * Constructs a {@link PreferencesRepositoryImpl} with the specified file name, loader, parser, and validator.
+     *
+     * @param preferencesFilename  the name of the file containing preferences data
+     * @param load                 the {@link Load} implementation used to read the preferences data from the file
+     * @param lineParser           the {@link LineParser} implementation used to parse the preferences data
+     * @param preferencesValidator the {@link Validator} implementation used to validate the parsed preferences data
+     */
+    public PreferencesRepositoryImpl(@Value(&quot;${preferencesFilename:preferences.txt}&quot;) String preferencesFilename,
+                                     Load&lt;Long, String&gt; load,
+                                     LineParser&lt;Long, String&gt; lineParser,
+<span class="fc" id="L35">                                     Validator&lt;Map&lt;Long, String&gt;&gt; preferencesValidator) {</span>
+<span class="fc" id="L36">        var preferences = load.read(preferencesFilename, lineParser);</span>
+<span class="fc" id="L37">        Validator.validate(preferences, preferencesValidator);</span>
+<span class="fc" id="L38">        this.preferences = preferences;</span>
+<span class="fc" id="L39">    }</span>
+
+    /**
+     * Checks if a preference with the specified ID exists.
+     *
+     * @param id the ID of the preference to check
+     * @return true if the preference exists, false otherwise
+     */
+    @Override
+    public boolean containId(Long id) {
+<span class="fc" id="L49">        return preferences.containsKey(id);</span>
+    }
+
+    /**
+     * Retrieves all preferences.
+     *
+     * @return a map containing all preferences, with the preference ID as the key and the preference name as the value
+     */
+    @Override
+    public Map&lt;Long, String&gt; getAll() {
+<span class="fc" id="L59">        return new HashMap&lt;&gt;(preferences);</span>
+    }
+
+    /**
+     * Retrieves a preference by its ID.
+     *
+     * @param id the ID of the preference to retrieve
+     * @return the preference name associated with the specified ID
+     * @throws IllegalArgumentException if a preference with the specified ID is not found
+     */
+    @Override
+    public String getById(Long id) {
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (containId(id)) {</span>
+<span class="fc" id="L72">            return preferences.get(id);</span>
+        }
+<span class="fc" id="L74">        throw new IllegalArgumentException(String.format(&quot;Preference with ID: %d not found&quot;, id));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

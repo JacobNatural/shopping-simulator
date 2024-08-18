@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractLoad.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shopping-simulator</a> &gt; <a href="index.source.html" class="el_package">com.app.txt.load.generic</a> &gt; <span class="el_source">AbstractLoad.java</span></div><h1>AbstractLoad.java</h1><pre class="source lang-java linenums">package com.app.txt.load.generic;
+
+import com.app.parser.LineParser;
+import com.app.txt.load.Load;
+import com.app.txt.transfer.Transfer;
+import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
+
+/**
+ * An abstract implementation of the {@link Load} interface.
+ * This class provides a generic way to load data from a file using a specified
+ * {@link Transfer} mechanism and a {@link LineParser} to parse each line of the file.
+ *
+ * @param &lt;T&gt; the type of keys in the resulting map
+ * @param &lt;U&gt; the type of values in the resulting map
+ */
+@RequiredArgsConstructor
+public class AbstractLoad&lt;T, U&gt; implements Load&lt;T, U&gt; {
+
+    /**
+     * The transfer mechanism used to read data from a file.
+     */
+    private final Transfer&lt;T, U&gt; transfer;
+
+    /**
+     * Reads data from the specified file and parses it into a map using the provided
+     * {@link LineParser}.
+     *
+     * @param filename the name of the file to read
+     * @param lineParser the parser used to parse each line of the file
+     * @return a map containing the parsed data
+     */
+    @Override
+    public Map&lt;T, U&gt; read(String filename, LineParser&lt;T, U&gt; lineParser) {
+<span class="fc" id="L36">        return transfer.read(filename, lineParser);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

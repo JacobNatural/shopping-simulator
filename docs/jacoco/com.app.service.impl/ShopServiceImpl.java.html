@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShopServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shopping-simulator</a> &gt; <a href="index.source.html" class="el_package">com.app.service.impl</a> &gt; <span class="el_source">ShopServiceImpl.java</span></div><h1>ShopServiceImpl.java</h1><pre class="source lang-java linenums">//package com.app.service.impl;
+//
+//import com.app.client.Client;
+//import com.app.product.Product;
+//import com.app.product.ProductComparators;
+//import com.app.product.ProductMapper;
+//import com.app.repository.PreferencesRepository;
+//import com.app.repository.ShopRepository;
+//import com.app.service.ProductService;
+//import com.app.service.ShopService;
+//import com.app.statistic.Statistic;
+//import lombok.RequiredArgsConstructor;
+//import org.springframework.stereotype.Component;
+//
+//import javax.annotation.PostConstruct;
+//import java.math.BigDecimal;
+//import java.util.*;
+//import java.util.function.Function;
+//import java.util.stream.Collectors;
+//
+//@RequiredArgsConstructor
+//@Component
+//public class ShopServiceImpl implements ShopService {
+//
+//    private final ShopRepository shopRepository;
+//    private final ProductService productService;
+//    private final PreferencesRepository preferencesRepository;
+//
+//    @PostConstruct
+//    public void postConstructAction(){
+//        makeShopping();
+//    }
+//
+//    public Statistic&lt;BigDecimal, List&lt;Product&gt;&gt; getAllProductsStatistic() {
+//        return productService.getProductsStatistic();
+//    }
+//
+//    public List&lt;Product&gt; getAllAvailableProducts() {
+//        return productService.getAllProducts();
+//    }
+//
+//
+//
+//    public List&lt;Client&gt; getClientWithBiggestAmountOfProduct() {
+//        return getMaxKeyAndReturnValue(
+//                groupByProductListPropertiesAndClients(ProductServiceImpl::amountOfProduct));
+//    }
+//
+//    public List&lt;Client&gt; getClientWithBiggerPayment() {
+//        return getMaxKeyAndReturnValue(
+//                groupByProductListPropertiesAndClients(ProductServiceImpl::totalPriceForAllProducts));
+//    }
+//
+//    public List&lt;Product&gt; getMostOftenProduct() {
+//        return groupByAmountOfProductAndProduct(groupByProductAndAmountOfClient()).entrySet()
+//                .stream()
+//                .max(Map.Entry.comparingByKey())
+//                .map(Map.Entry::getValue)
+//                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;The list is empty, no value to return&quot;));
+//    }
+//
+//    public List&lt;Product&gt; getRatherProduct() {
+//        return groupByAmountOfProductAndProduct(groupByProductAndAmountOfClient()).entrySet()
+//                .stream()
+//                .min(Map.Entry.comparingByKey())
+//                .map(Map.Entry::getValue)
+//                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;The list is empty, no value to return&quot;));
+//    }
+//
+//    public Map&lt;Product, Integer&gt; groupByProductAndAmountOfClient() {
+//        return groupByProductPropertiesAndClients(ProductMapper.toProduct)
+//                .entrySet()
+//                .stream()
+//                .collect(Collectors.toMap(Map.Entry::getKey, m -&gt; m.getValue().size()));
+//    }
+//
+//    public List&lt;String&gt; getCategoriesSortedByPopularity(Comparator&lt;Integer&gt; comparator) {
+//        if (comparator == null) {
+//            throw new IllegalArgumentException(&quot;Comparator cannot be null&quot;);
+//        }
+//
+//        return groupByProductPropertiesAndClients(ProductMapper.toCategory)
+//                .entrySet()
+//                .stream()
+//                .collect(Collectors.toMap(Map.Entry::getKey, m -&gt; m.getValue().size()))
+//                .entrySet()
+//                .stream()
+//                .sorted((m1, m2) -&gt; comparator.compare(m2.getValue(), m1.getValue()))
+//                .map(Map.Entry::getKey)
+//                .toList();
+//    }
+//
+//    private void makeShopping() {
+//        var groupedProductsByCategory =
+//                getAllProductsGroupedByAndSortedBy(
+//                        ProductMapper.toCategory, ProductComparators.compareByPrice);
+//
+//        shopRepository.getAll()
+//                .keySet()
+//                .forEach(client -&gt; {
+//                    var availableProducts = client.getAvailableProducts(
+//                            groupedProductsByCategory,
+//                            preferencesRepository);
+//                    shopRepository.updateProductList(
+//                            client,
+//                            availableProducts);
+//                });
+//    }
+//
+//    private static Map&lt;Integer, List&lt;Product&gt;&gt; groupByAmountOfProductAndProduct(Map&lt;Product, Integer&gt; map) {
+//        return map
+//                .entrySet()
+//                .stream()
+//                .collect(Collectors.groupingBy(
+//                        Map.Entry::getValue,
+//                        Collectors.mapping(
+//                                Map.Entry::getKey,
+//                                Collectors.toList())));
+//
+//    }
+//
+//    private &lt;T&gt; Map&lt;T, List&lt;Product&gt;&gt; getAllProductsGroupedByAndSortedBy(
+//            Function&lt;Product, T&gt; productMapper, Comparator&lt;Product&gt; productComparator) {
+//        return productService.groupAndSortProducts(
+//                productMapper, productComparator);
+//    }
+//
+//    private static &lt;T extends Comparable&lt;T&gt;&gt; List&lt;Client&gt; getMaxKeyAndReturnValue(Map&lt;T, List&lt;Client&gt;&gt; map) {
+//
+//        return map.entrySet()
+//                .stream()
+//                .max(Map.Entry.comparingByKey())
+//                .map(Map.Entry::getValue)
+//                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;The map is empty, no value to return&quot;));
+//    }
+//
+//    private &lt;T&gt; Map&lt;T, List&lt;Client&gt;&gt; groupByProductPropertiesAndClients(Function&lt;Product, T&gt; productMapper) {
+//
+//        return shopRepository
+//                .getAll()
+//                .entrySet()
+//                .stream()
+//                .filter(shop -&gt; !shop.getValue().isEmpty())
+//                .flatMap(
+//                        m -&gt; m.getValue()
+//                                .stream()
+//                                .map(
+//                                        product -&gt;
+//                                                new AbstractMap.SimpleEntry&lt;&gt;(
+//                                                        productMapper.apply(product), m.getKey())))
+//                .collect(
+//                        Collectors.groupingBy(
+//                                AbstractMap.SimpleEntry::getKey,
+//                                Collectors.mapping(
+//                                        AbstractMap.SimpleEntry::getValue,
+//                                        Collectors.toList())));
+//    }
+//
+//    private &lt;T&gt; Map&lt;T, List&lt;Client&gt;&gt; groupByProductListPropertiesAndClients(Function&lt;List&lt;Product&gt;, T&gt; function) {
+//        return shopRepository
+//                .getAll()
+//                .entrySet()
+//                .stream()
+//                .filter(shop -&gt; !shop.getValue().isEmpty())
+//                .map(shop -&gt; new AbstractMap.SimpleEntry&lt;&gt;(
+//                        function.apply(shop.getValue()), shop.getKey()))
+//                .collect(Collectors.groupingBy(
+//                        AbstractMap.SimpleEntry::getKey,
+//                        Collectors.mapping(
+//                                AbstractMap.SimpleEntry::getValue, Collectors.toList())));
+//    }
+//
+//    @Override
+//    public String toString(){
+//        return shopRepository.getAll().toString();
+//    }
+//}
+package com.app.service.impl;
+
+import com.app.client.Client;
+import com.app.product.Product;
+import com.app.product.ProductComparators;
+import com.app.product.ProductMapper;
+import com.app.repository.PreferencesRepository;
+import com.app.repository.ShopRepository;
+import com.app.service.ProductService;
+import com.app.service.ShopService;
+import com.app.statistic.Statistic;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+/**
+ * Implementation of the ShopService interface that provides services
+ * related to shopping, products, and clients.
+ * This class is managed by Spring as a component.
+ */
+@RequiredArgsConstructor
+@Component
+public class ShopServiceImpl implements ShopService {
+
+    /**
+     * Repository for storing and managing shop data.
+     */
+    private final ShopRepository shopRepository;
+
+    /**
+     * Service for handling product-related operations.
+     */
+    private final ProductService productService;
+
+    /**
+     * Repository for managing client preferences.
+     */
+    private final PreferencesRepository preferencesRepository;
+
+    /**
+     * This method is executed after the object is created and dependencies are injected.
+     * It triggers the shopping process.
+     */
+    @PostConstruct
+    public void postConstructAction(){
+<span class="fc" id="L228">        makeShopping();</span>
+<span class="fc" id="L229">    }</span>
+
+    /**
+     * Retrieves statistics for all products, including price information.
+     *
+     * @return a {@link Statistic} object containing the total price and a list of products.
+     */
+    public Statistic&lt;BigDecimal, List&lt;Product&gt;&gt; getAllProductsStatistic() {
+<span class="fc" id="L237">        return productService.getProductsStatistic();</span>
+    }
+
+    /**
+     * Retrieves a list of all available products.
+     *
+     * @return a list of {@link Product} objects.
+     */
+    public List&lt;Product&gt; getAllAvailableProducts() {
+<span class="fc" id="L246">        return productService.getAllProducts();</span>
+    }
+
+    /**
+     * Finds and returns a list of clients who have the largest quantity of products.
+     *
+     * @return a list of {@link Client} objects with the largest quantity of products.
+     */
+    public List&lt;Client&gt; getClientWithBiggestAmountOfProduct() {
+<span class="fc" id="L255">        return getMaxKeyAndReturnValue(</span>
+<span class="fc" id="L256">                groupByProductListPropertiesAndClients(ProductServiceImpl::amountOfProduct));</span>
+    }
+
+    /**
+     * Finds and returns a list of clients who have made the largest total payments.
+     *
+     * @return a list of {@link Client} objects with the largest payments.
+     */
+    public List&lt;Client&gt; getClientWithBiggerPayment() {
+<span class="fc" id="L265">        return getMaxKeyAndReturnValue(</span>
+<span class="fc" id="L266">                groupByProductListPropertiesAndClients(ProductServiceImpl::totalPriceForAllProducts));</span>
+    }
+
+    /**
+     * Retrieves the most frequently bought product.
+     *
+     * @return a list of the most often purchased {@link Product} objects.
+     * @throws IllegalArgumentException if the list is empty.
+     */
+    public List&lt;Product&gt; getMostOftenProduct() {
+<span class="fc" id="L276">        return groupByAmountOfProductAndProduct(groupByProductAndAmountOfClient()).entrySet()</span>
+<span class="fc" id="L277">                .stream()</span>
+<span class="fc" id="L278">                .max(Map.Entry.comparingByKey())</span>
+<span class="fc" id="L279">                .map(Map.Entry::getValue)</span>
+<span class="fc" id="L280">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;The list is empty, no value to return&quot;));</span>
+    }
+
+    /**
+     * Retrieves the least frequently bought product.
+     *
+     * @return a list of the least often purchased {@link Product} objects.
+     * @throws IllegalArgumentException if the list is empty.
+     */
+    public List&lt;Product&gt; getRatherProduct() {
+<span class="fc" id="L290">        return groupByAmountOfProductAndProduct(groupByProductAndAmountOfClient()).entrySet()</span>
+<span class="fc" id="L291">                .stream()</span>
+<span class="fc" id="L292">                .min(Map.Entry.comparingByKey())</span>
+<span class="fc" id="L293">                .map(Map.Entry::getValue)</span>
+<span class="fc" id="L294">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;The list is empty, no value to return&quot;));</span>
+    }
+
+    /**
+     * Groups products by the number of clients who bought them and returns the map.
+     *
+     * @return a map of {@link Product} objects and the number of clients who bought them.
+     */
+    public Map&lt;Product, Integer&gt; groupByProductAndAmountOfClient() {
+<span class="fc" id="L303">        return groupByProductPropertiesAndClients(ProductMapper.toProduct)</span>
+<span class="fc" id="L304">                .entrySet()</span>
+<span class="fc" id="L305">                .stream()</span>
+<span class="fc" id="L306">                .collect(Collectors.toMap(Map.Entry::getKey, m -&gt; m.getValue().size()));</span>
+    }
+
+    /**
+     * Retrieves categories sorted by popularity based on the provided comparator.
+     *
+     * @param comparator a {@link Comparator} to define the order of popularity.
+     * @return a list of category names sorted by popularity.
+     * @throws IllegalArgumentException if the comparator is null.
+     */
+    public List&lt;String&gt; getCategoriesSortedByPopularity(Comparator&lt;Integer&gt; comparator) {
+<span class="fc bfc" id="L317" title="All 2 branches covered.">        if (comparator == null) {</span>
+<span class="fc" id="L318">            throw new IllegalArgumentException(&quot;Comparator cannot be null&quot;);</span>
+        }
+
+<span class="fc" id="L321">        return groupByProductPropertiesAndClients(ProductMapper.toCategory)</span>
+<span class="fc" id="L322">                .entrySet()</span>
+<span class="fc" id="L323">                .stream()</span>
+<span class="fc" id="L324">                .collect(Collectors.toMap(Map.Entry::getKey, m -&gt; m.getValue().size()))</span>
+<span class="fc" id="L325">                .entrySet()</span>
+<span class="fc" id="L326">                .stream()</span>
+<span class="fc" id="L327">                .sorted((m1, m2) -&gt; comparator.compare(m2.getValue(), m1.getValue()))</span>
+<span class="fc" id="L328">                .map(Map.Entry::getKey)</span>
+<span class="fc" id="L329">                .toList();</span>
+    }
+
+    /**
+     * Executes the shopping process, grouping products by category and sorting them by price.
+     */
+    private void makeShopping() {
+<span class="fc" id="L336">        var groupedProductsByCategory =</span>
+<span class="fc" id="L337">                getAllProductsGroupedByAndSortedBy(</span>
+                        ProductMapper.toCategory, ProductComparators.compareByPrice);
+
+<span class="fc" id="L340">        shopRepository.getAll()</span>
+<span class="fc" id="L341">                .keySet()</span>
+<span class="fc" id="L342">                .forEach(client -&gt; {</span>
+<span class="fc" id="L343">                    var availableProducts = client.getAvailableProducts(</span>
+                            groupedProductsByCategory,
+                            preferencesRepository);
+<span class="fc" id="L346">                    shopRepository.updateProductList(</span>
+                            client,
+                            availableProducts);
+<span class="fc" id="L349">                });</span>
+<span class="fc" id="L350">    }</span>
+
+    /**
+     * Groups products by the number of products bought by clients.
+     *
+     * @param map a map of products and the number of clients who bought them.
+     * @return a map of product quantities and a list of corresponding products.
+     */
+    private static Map&lt;Integer, List&lt;Product&gt;&gt; groupByAmountOfProductAndProduct(Map&lt;Product, Integer&gt; map) {
+<span class="fc" id="L359">        return map</span>
+<span class="fc" id="L360">                .entrySet()</span>
+<span class="fc" id="L361">                .stream()</span>
+<span class="fc" id="L362">                .collect(Collectors.groupingBy(</span>
+                        Map.Entry::getValue,
+<span class="fc" id="L364">                        Collectors.mapping(</span>
+                                Map.Entry::getKey,
+<span class="fc" id="L366">                                Collectors.toList())));</span>
+
+    }
+
+    /**
+     * Groups all products by a given property and sorts them by a given comparator.
+     *
+     * @param productMapper a function to map products to a specific property.
+     * @param productComparator a comparator to sort products.
+     * @param &lt;T&gt; the type of the property used for grouping.
+     * @return a map of grouped products by the specified property.
+     */
+    private &lt;T&gt; Map&lt;T, List&lt;Product&gt;&gt; getAllProductsGroupedByAndSortedBy(
+            Function&lt;Product, T&gt; productMapper, Comparator&lt;Product&gt; productComparator) {
+<span class="fc" id="L380">        return productService.groupAndSortProducts(</span>
+                productMapper, productComparator);
+    }
+
+    /**
+     * Finds the maximum key in a map and returns the corresponding value.
+     *
+     * @param map a map where keys are comparable and values are lists of clients.
+     * @param &lt;T&gt; the type of the keys, which must be comparable.
+     * @return a list of clients corresponding to the maximum key.
+     * @throws IllegalArgumentException if the map is empty.
+     */
+    private static &lt;T extends Comparable&lt;T&gt;&gt; List&lt;Client&gt; getMaxKeyAndReturnValue(Map&lt;T, List&lt;Client&gt;&gt; map) {
+
+<span class="fc" id="L394">        return map.entrySet()</span>
+<span class="fc" id="L395">                .stream()</span>
+<span class="fc" id="L396">                .max(Map.Entry.comparingByKey())</span>
+<span class="fc" id="L397">                .map(Map.Entry::getValue)</span>
+<span class="fc" id="L398">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;The map is empty, no value to return&quot;));</span>
+    }
+
+    /**
+     * Groups products by their properties and maps them to corresponding clients.
+     *
+     * @param productMapper a function to map products to a specific property.
+     * @param &lt;T&gt; the type of the property used for grouping.
+     * @return a map of grouped clients by the specified property of products.
+     */
+    private &lt;T&gt; Map&lt;T, List&lt;Client&gt;&gt; groupByProductPropertiesAndClients(Function&lt;Product, T&gt; productMapper) {
+
+<span class="fc" id="L410">        return shopRepository</span>
+<span class="fc" id="L411">                .getAll()</span>
+<span class="fc" id="L412">                .entrySet()</span>
+<span class="fc" id="L413">                .stream()</span>
+<span class="fc bfc" id="L414" title="All 2 branches covered.">                .filter(shop -&gt; !shop.getValue().isEmpty())</span>
+<span class="fc" id="L415">                .flatMap(</span>
+<span class="fc" id="L416">                        m -&gt; m.getValue()</span>
+<span class="fc" id="L417">                                .stream()</span>
+<span class="fc" id="L418">                                .map(</span>
+                                        product -&gt;
+<span class="fc" id="L420">                                                new AbstractMap.SimpleEntry&lt;&gt;(</span>
+<span class="fc" id="L421">                                                        productMapper.apply(product), m.getKey())))</span>
+<span class="fc" id="L422">                .collect(</span>
+<span class="fc" id="L423">                        Collectors.groupingBy(</span>
+                                AbstractMap.SimpleEntry::getKey,
+<span class="fc" id="L425">                                Collectors.mapping(</span>
+                                        AbstractMap.SimpleEntry::getValue,
+<span class="fc" id="L427">                                        Collectors.toList())));</span>
+    }
+
+    /**
+     * Groups products by their list properties and maps them to corresponding clients.
+     *
+     * @param function a function that applies to a list of products and returns a property.
+     * @param &lt;T&gt; the type of the property used for grouping.
+     * @return a map of grouped clients by the specified property of product lists.
+     */
+    private &lt;T&gt; Map&lt;T, List&lt;Client&gt;&gt; groupByProductListPropertiesAndClients(Function&lt;List&lt;Product&gt;, T&gt; function) {
+<span class="fc" id="L438">        return shopRepository</span>
+<span class="fc" id="L439">                .getAll()</span>
+<span class="fc" id="L440">                .entrySet()</span>
+<span class="fc" id="L441">                .stream()</span>
+<span class="fc bfc" id="L442" title="All 2 branches covered.">                .filter(shop -&gt; !shop.getValue().isEmpty())</span>
+<span class="fc" id="L443">                .map(shop -&gt; new AbstractMap.SimpleEntry&lt;&gt;(</span>
+<span class="fc" id="L444">                        function.apply(shop.getValue()), shop.getKey()))</span>
+<span class="fc" id="L445">                .collect(Collectors.groupingBy(</span>
+                        AbstractMap.SimpleEntry::getKey,
+<span class="fc" id="L447">                        Collectors.mapping(</span>
+<span class="fc" id="L448">                                AbstractMap.SimpleEntry::getValue, Collectors.toList())));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

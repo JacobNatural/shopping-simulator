@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Validator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shopping-simulator</a> &gt; <a href="index.source.html" class="el_package">com.app.validators</a> &gt; <span class="el_source">Validator.java</span></div><h1>Validator.java</h1><pre class="source lang-java linenums">package com.app.validators;
+
+import java.util.List;
+
+/**
+ * Interface for validating objects of type {@code T}.
+ * &lt;p&gt;This interface provides a contract for validating instances of type {@code T} and collecting
+ * validation errors.&lt;/p&gt;
+ *
+ * @param &lt;T&gt; the type of object to be validated
+ */
+public interface Validator&lt;T&gt; {
+
+    /**
+     * Validates the provided object.
+     * &lt;p&gt;This method should implement the specific validation logic for the object of type {@code T}.
+     * It returns a list of validation error messages, where an empty list indicates that the object is valid.&lt;/p&gt;
+     *
+     * @param t the object to be validated
+     * @return a list of validation error messages. If the list is empty, the object is considered valid.
+     * @throws IllegalArgumentException if {@code t} is {@code null}
+     */
+    List&lt;String&gt; validate(T t);
+
+    /**
+     * Validates the provided object using the given {@link Validator}.
+     * &lt;p&gt;This static method uses the provided validator to validate the object and throws an {@link IllegalArgumentException}
+     * if there are any validation errors. The errors are combined into a single string with each error message on a new line.&lt;/p&gt;
+     *
+     * @param t         the object to be validated
+     * @param validator the {@link Validator} used to validate the object
+     * @param &lt;T&gt;       the type of object to be validated
+     * @throws IllegalArgumentException if {@code t} is {@code null} or if the validator is {@code null}
+     * @throws IllegalArgumentException if there are validation errors
+     */
+    static &lt;T&gt; void validate(T t, Validator&lt;T&gt; validator) {
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (t == null) {</span>
+<span class="fc" id="L38">            throw new IllegalArgumentException(&quot;Object to be validated cannot be null&quot;);</span>
+        }
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if (validator == null) {</span>
+<span class="fc" id="L41">            throw new IllegalArgumentException(&quot;Validator cannot be null&quot;);</span>
+        }
+
+<span class="fc" id="L44">        var errors = validator.validate(t);</span>
+
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if (!errors.isEmpty()) {</span>
+<span class="fc" id="L47">            throw new IllegalArgumentException(String.join(&quot;\n&quot;, errors));</span>
+        }
+<span class="fc" id="L49">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClientLoad.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shopping-simulator</a> &gt; <a href="index.source.html" class="el_package">com.app.txt.load.impl</a> &gt; <span class="el_source">ClientLoad.java</span></div><h1>ClientLoad.java</h1><pre class="source lang-java linenums">package com.app.txt.load.impl;
+
+import com.app.client.Client;
+import com.app.txt.transfer.Transfer;
+import com.app.txt.load.Load;
+import com.app.txt.load.generic.AbstractLoad;
+import org.springframework.stereotype.Component;
+
+/**
+ * A concrete implementation of the {@link Load} interface for loading {@link Client} data.
+ * This class extends {@link AbstractLoad} and is used specifically to handle the loading
+ * of client data from a file, using a specified {@link Transfer} mechanism.
+ *
+ * &lt;p&gt;This class is marked as a Spring {@link Component} to be automatically detected
+ * and managed by the Spring container.&lt;/p&gt;
+ */
+@Component
+public class ClientLoad extends AbstractLoad&lt;Long, Client&gt; implements Load&lt;Long, Client&gt; {
+
+    /**
+     * Constructs a {@link ClientLoad} instance with the specified {@link Transfer} mechanism.
+     *
+     * @param transfer the {@link Transfer} mechanism used to read client data from a file
+     */
+    public ClientLoad(Transfer&lt;Long, Client&gt; transfer) {
+<span class="fc" id="L26">        super(transfer);</span>
+<span class="fc" id="L27">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

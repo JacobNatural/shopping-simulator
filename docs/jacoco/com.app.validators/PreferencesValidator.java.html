@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PreferencesValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shopping-simulator</a> &gt; <a href="index.source.html" class="el_package">com.app.validators</a> &gt; <span class="el_source">PreferencesValidator.java</span></div><h1>PreferencesValidator.java</h1><pre class="source lang-java linenums">package com.app.validators;
+
+import com.app.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Validator for checking the validity of preferences against available product categories.
+ * &lt;p&gt;This class implements the {@link Validator} interface to ensure that preferences are
+ * valid according to the categories available in the {@link ProductRepository}.&lt;/p&gt;
+ */
+@Component
+@RequiredArgsConstructor
+public class PreferencesValidator implements Validator&lt;Map&lt;Long, String&gt;&gt; {
+
+    private final ProductRepository productRepository;
+
+    /**
+     * Validates the provided preferences.
+     * &lt;p&gt;The validation checks the following:&lt;/p&gt;
+     * &lt;ul&gt;
+     *     &lt;li&gt;No duplicate categories are allowed in the preferences.&lt;/li&gt;
+     *     &lt;li&gt;Each category in the preferences must be one of the available categories in the {@link ProductRepository}.&lt;/li&gt;
+     * &lt;/ul&gt;
+     *
+     * @param preferences a map where the key is the preference ID and the value is the category name
+     * @return a list of validation error messages. If the list is empty, the preferences are valid.
+     * @throws IllegalArgumentException if {@code preferences} is {@code null}
+     */
+    @Override
+    public List&lt;String&gt; validate(Map&lt;Long, String&gt; preferences) {
+
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        if (preferences == null) {</span>
+<span class="fc" id="L38">            throw new IllegalArgumentException(&quot;Preferences cannot be null&quot;);</span>
+        }
+
+<span class="fc" id="L41">        var categories = productRepository.availableCategories();</span>
+<span class="fc" id="L42">        var errors = new ArrayList&lt;String&gt;();</span>
+<span class="fc" id="L43">        var valuesPreferences = preferences.values().stream().distinct().toList();</span>
+
+        // Check for duplicate categories in preferences
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if (valuesPreferences.size() != preferences.size()) {</span>
+<span class="fc" id="L47">            errors.add(&quot;Categories in preferences cannot be duplicated&quot;);</span>
+        }
+
+        // Check if each preference category is available
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        for (var category : valuesPreferences) {</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">            if (!categories.contains(category)) {</span>
+<span class="fc" id="L53">                errors.add(String.format(&quot;Category not available: %s&quot;, category));</span>
+            }
+<span class="fc" id="L55">        }</span>
+
+<span class="fc" id="L57">        return errors;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

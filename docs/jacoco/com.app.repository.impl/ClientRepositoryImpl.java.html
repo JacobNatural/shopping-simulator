@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClientRepositoryImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shopping-simulator</a> &gt; <a href="index.source.html" class="el_package">com.app.repository.impl</a> &gt; <span class="el_source">ClientRepositoryImpl.java</span></div><h1>ClientRepositoryImpl.java</h1><pre class="source lang-java linenums">package com.app.repository.impl;
+
+import com.app.parser.LineParser;
+import com.app.client.Client;
+import com.app.repository.ClientRepository;
+import com.app.txt.load.Load;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Implementation of the {@link ClientRepository} interface that provides access to client data.
+ * &lt;p&gt;
+ * This class loads client data from a file using the {@link Load} interface and parses it using a {@link LineParser}.
+ */
+@Component
+public class ClientRepositoryImpl implements ClientRepository {
+
+    private final Map&lt;Long, Client&gt; clients;
+
+    /**
+     * Constructs a {@link ClientRepositoryImpl} with the specified file name, loader, and parser.
+     *
+     * @param clientFilename the name of the file containing client data
+     * @param load           the {@link Load} implementation used to read the client data from the file
+     * @param parser         the {@link LineParser} implementation used to parse the client data
+     */
+<span class="fc" id="L30">    public ClientRepositoryImpl(@Value(&quot;${client.filename}&quot;) String clientFilename, Load&lt;Long, Client&gt; load, LineParser&lt;Long, Client&gt; parser) {</span>
+<span class="fc" id="L31">        this.clients = load.read(clientFilename, parser);</span>
+<span class="fc" id="L32">    }</span>
+
+    /**
+     * Retrieves all clients.
+     *
+     * @return a map containing all clients, with the client ID as the key and the {@link Client} object as the value
+     */
+    @Override
+    public Map&lt;Long, Client&gt; getAll() {
+<span class="fc" id="L41">        return new HashMap&lt;&gt;(clients);</span>
+    }
+
+    /**
+     * Retrieves a client by their ID.
+     *
+     * @param id the ID of the client to retrieve
+     * @return the {@link Client} object with the specified ID
+     * @throws IllegalArgumentException if a client with the specified ID is not found
+     */
+    @Override
+    public Client getById(Long id) {
+<span class="fc bfc" id="L53" title="All 2 branches covered.">        if (clients.containsKey(id)) {</span>
+<span class="fc" id="L54">            return clients.get(id);</span>
+        }
+<span class="fc" id="L56">        throw new IllegalArgumentException(String.format(&quot;Client with ID: %d not found&quot;, id));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

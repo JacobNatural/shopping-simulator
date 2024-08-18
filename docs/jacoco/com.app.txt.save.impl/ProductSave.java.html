@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProductSave.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shopping-simulator</a> &gt; <a href="index.source.html" class="el_package">com.app.txt.save.impl</a> &gt; <span class="el_source">ProductSave.java</span></div><h1>ProductSave.java</h1><pre class="source lang-java linenums">package com.app.txt.save.impl;
+
+import com.app.product.Product;
+import com.app.txt.transfer.Transfer;
+import com.app.txt.save.Save;
+import com.app.txt.save.generic.AbstractSave;
+import org.springframework.stereotype.Component;
+
+/**
+ * Implementation of the {@link Save} interface for {@link Product} objects.
+ *
+ * &lt;p&gt;This class provides functionality to save {@link Product} instances to a file. It extends
+ * the generic {@link AbstractSave} class and uses a {@link Transfer} instance to handle the
+ * actual saving process.&lt;/p&gt;
+ */
+@Component
+public class ProductSave extends AbstractSave&lt;Product&gt; implements Save&lt;Product&gt; {
+
+    /**
+     * Constructs a {@link ProductSave} with the specified {@link Transfer}.
+     *
+     * @param transfer the {@link Transfer} instance used for saving {@link Product} objects
+     */
+    public ProductSave(Transfer&lt;Product, Product&gt; transfer) {
+<span class="fc" id="L25">        super(transfer);</span>
+<span class="fc" id="L26">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClientValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shopping-simulator</a> &gt; <a href="index.source.html" class="el_package">com.app.client</a> &gt; <span class="el_source">ClientValidator.java</span></div><h1>ClientValidator.java</h1><pre class="source lang-java linenums">package com.app.client;
+
+import com.app.repository.PreferencesRepository;
+import com.app.validators.Validator;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Validator for {@link Client} instances.
+ * &lt;p&gt;
+ * Validates client properties such as ID, age, balance, and preferences based on configured constraints.
+ * &lt;/p&gt;
+ */
+@Component
+public class ClientValidator implements Validator&lt;Client&gt; {
+
+    private final int minAge;
+    private final BigDecimal minBalance;
+    private final PreferencesRepository preferencesRepository;
+
+    /**
+     * Constructs a {@link ClientValidator} with the specified minimum age, minimum balance, and preferences repository.
+     *
+     * @param minAge                the minimum age for a valid client
+     * @param minBalance            the minimum balance for a valid client
+     * @param preferencesRepository the repository to check if preferences are valid
+     */
+    public ClientValidator(
+            @Value(&quot;${clientMinAge:0}&quot;) int minAge,
+            @Value(&quot;${clientMinBalance:0}&quot;) BigDecimal minBalance,
+<span class="fc" id="L35">            PreferencesRepository preferencesRepository) {</span>
+<span class="fc" id="L36">        this.minAge = minAge;</span>
+<span class="fc" id="L37">        this.minBalance = minBalance;</span>
+<span class="fc" id="L38">        this.preferencesRepository = preferencesRepository;</span>
+<span class="fc" id="L39">    }</span>
+
+    /**
+     * Validates the given {@link Client} instance.
+     * &lt;p&gt;
+     * Checks if the client has a valid ID, age, balance, and if all preferences are recognized.
+     * &lt;/p&gt;
+     *
+     * @param client the client to validate
+     * @return a list of error messages if the client is invalid, otherwise an empty list
+     */
+    @Override
+    public List&lt;String&gt; validate(Client client) {
+
+<span class="fc" id="L53">        var errors = new ArrayList&lt;String&gt;();</span>
+
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (client.id &lt; 1) {</span>
+<span class="fc" id="L56">            errors.add(&quot;ID cannot be negative.&quot;);</span>
+        }
+
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (client.age &lt; minAge) {</span>
+<span class="fc" id="L60">            errors.add(STR.&quot;Age cannot be less than \{minAge}.&quot;);</span>
+        }
+
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        if (client.balance.compareTo(minBalance) &lt; 0) {</span>
+<span class="fc" id="L64">            errors.add(STR.&quot;Balance cannot be less than \{minBalance}.&quot;);</span>
+        }
+
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        for (var preference : client.preferences) {</span>
+
+<span class="fc bfc" id="L69" title="All 2 branches covered.">            if (!preferencesRepository.containId(preference)) {</span>
+<span class="fc" id="L70">                errors.add(STR.&quot;Preference ID not available \{preference}.&quot;);</span>
+            }
+<span class="fc" id="L72">        }</span>
+
+<span class="fc" id="L74">        return errors;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

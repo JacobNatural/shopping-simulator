@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProductValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shopping-simulator</a> &gt; <a href="index.source.html" class="el_package">com.app.product</a> &gt; <span class="el_source">ProductValidator.java</span></div><h1>ProductValidator.java</h1><pre class="source lang-java linenums">package com.app.product;
+
+import com.app.validators.Validator;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Validator implementation for {@link Product} objects.
+ * &lt;p&gt;
+ * Validates {@link Product} instances based on minimum amount and price constraints.
+ */
+@Component
+public class ProductValidator implements Validator&lt;Product&gt; {
+
+    private final int minAmount;
+    private final BigDecimal minPrice;
+
+    /**
+     * Constructs a {@link ProductValidator} with the specified minimum amount and price.
+     *
+     * @param minAmount the minimum amount for a product to be considered valid
+     * @param minPrice  the minimum price for a product to be considered valid
+     */
+    public ProductValidator(
+            @Value(&quot;${productMinAmount:1}&quot;) int minAmount,
+<span class="fc" id="L30">            @Value(&quot;${productMinPrice:0.1}&quot;) BigDecimal minPrice) {</span>
+<span class="fc" id="L31">        this.minAmount = minAmount;</span>
+<span class="fc" id="L32">        this.minPrice = minPrice;</span>
+<span class="fc" id="L33">    }</span>
+
+    /**
+     * Validates a {@link Product} against the defined constraints.
+     *
+     * @param product the {@link Product} to validate
+     * @return a list of error messages if the product is invalid; otherwise, an empty list
+     */
+    @Override
+    public List&lt;String&gt; validate(Product product) {
+
+<span class="fc" id="L44">        var errors = new ArrayList&lt;String&gt;();</span>
+
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if (product.id &lt; 1) {</span>
+<span class="fc" id="L47">            errors.add(&quot;Product id cannot be less than 1&quot;);</span>
+        }
+
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        if (product.amount &lt; minAmount) {</span>
+<span class="fc" id="L51">            errors.add(STR.&quot;Product amount cannot be less than \{minAmount}&quot;);</span>
+        }
+
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (product.price.compareTo(minPrice) &lt; 0) {</span>
+<span class="fc" id="L55">            errors.add(STR.&quot;Product price cannot be less than \{minPrice}&quot;);</span>
+        }
+
+<span class="fc" id="L58">        return errors;</span>
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

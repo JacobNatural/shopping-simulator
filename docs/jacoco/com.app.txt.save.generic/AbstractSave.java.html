@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pl"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AbstractSave.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shopping-simulator</a> &gt; <a href="index.source.html" class="el_package">com.app.txt.save.generic</a> &gt; <span class="el_source">AbstractSave.java</span></div><h1>AbstractSave.java</h1><pre class="source lang-java linenums">package com.app.txt.save.generic;
+
+import com.app.txt.transfer.Transfer;
+import com.app.txt.save.Save;
+import lombok.RequiredArgsConstructor;
+
+import java.util.function.Function;
+
+/**
+ * Abstract implementation of the {@link Save} interface.
+ *
+ * &lt;p&gt;This generic class provides a basic implementation for saving data to a file. It uses
+ * a {@link Transfer} instance to handle the actual writing of data and a {@link Function} to
+ * prepare the data for saving.&lt;/p&gt;
+ *
+ * @param &lt;T&gt; the type of data to be saved
+ */
+@RequiredArgsConstructor
+public class AbstractSave&lt;T&gt; implements Save&lt;T&gt; {
+
+    private final Transfer&lt;T, T&gt; transfer;
+
+    /**
+     * Writes the specified data to a file after preparing it using the provided function.
+     *
+     * @param filename the name of the file to write data to
+     * @param t        the data to be saved
+     * @param prepare  a {@link Function} used to prepare the data for saving
+     */
+    @Override
+    public void write(String filename, T t, Function&lt;T, String&gt; prepare) {
+<span class="fc" id="L32">        transfer.write(filename, t, prepare);</span>
+<span class="fc" id="L33">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
